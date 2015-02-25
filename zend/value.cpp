@@ -124,7 +124,7 @@ Value::Value(const std::string &value)
  */
 Value::Value(const char *value, int size)
 {
-	// allocate the zval
+    // allocate the zval
     MAKE_STD_ZVAL(_val);
 
     // is there a value?
@@ -156,8 +156,7 @@ Value::Value(double value)
  *  @param  zval        Value to wrap
  *  @param  ref         Force this to be a reference
  */
-Value::Value(struct _zval_struct *val, bool ref)
-: _val(val)
+Value::Value(struct _zval_struct *val, bool ref) : _val(val)
 {
     // if the variable is not already a reference, and it has more than one
     // variable pointing to it, we should seperate it so that any changes
@@ -286,7 +285,7 @@ Value::Value(const Value &that)
  *  Move constructor
  *  @param  value
  */
-Value::Value(Value &&that)  noexcept: _val(that._val)
+Value::Value(Value &&that)  _NOEXCEPT: _val(that._val)
 {
     // clear the other object
     that._val = nullptr;
@@ -424,7 +423,7 @@ bool Value::isStreamResource() const
  *  @param  value
  *  @return Value
  */
-Value &Value::operator=(Value &&value) noexcept
+Value &Value::operator=(Value &&value) _NOEXCEPT
 {
     // skip self assignment
     if (this == &value) return *this;

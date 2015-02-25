@@ -27,6 +27,9 @@
 /**
  *  Include all headers files that are related to this library
  */
+#include <phpcpp/noexcept.h>
+#include <phpcpp/platform.h>
+#include <phpcpp/version.h>
 #include <phpcpp/inivalue.h>
 #include <phpcpp/ini.h>
 #include <phpcpp/exception.h>
@@ -57,6 +60,7 @@
 #include <phpcpp/serializable.h>
 #include <phpcpp/classtype.h>
 #include <phpcpp/classbase.h>
+#include <phpcpp/constant.h>
 #include <phpcpp/interface.h>
 #include <phpcpp/class.h>
 #include <phpcpp/namespace.h>

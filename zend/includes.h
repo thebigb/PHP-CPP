@@ -48,6 +48,9 @@
 /**
  *  Include other files from this library
  */
+#include "../include/noexcept.h"
+#include "../include/platform.h"
+#include "../include/version.h"
 #include "../include/inivalue.h"
 #include "../include/ini.h"
 #include "../include/exception.h"
@@ -79,6 +82,7 @@
 #include "../include/classtype.h"
 #include "../include/classbase.h"
 #include "../include/interface.h"
+#include "../include/constant.h"
 #include "../include/class.h"
 #include "../include/namespace.h"
 #include "../include/extension.h"
@@ -123,6 +127,11 @@
 #include "executestate.h"
 #include "opcodes.h"
 #include "functor.h"
+#include "constantimpl.h"
+#include "delayedfree.h"
+#include "extensionpath.h"
+#include "symbol.h"
+#include "module.h"
 
 #ifndef ZVAL_COPY_VALUE
 #define ZVAL_COPY_VALUE(z, v)  \

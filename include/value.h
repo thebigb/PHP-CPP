@@ -85,6 +85,9 @@ public:
         for (auto &elem : input) setRaw(i++, elem);
     }
 
+    // old visual c++ environments have no support for initializer lists
+#   if !defined(_MSC_VER) || _MSC_VER >= 1800
+
     /**
      *  Constructor from an initializer list
      *  @param  value
@@ -98,6 +101,9 @@ public:
         // set all elements
         for (auto &elem : value) setRaw(i++, elem);
     }
+
+    // end of visual c++ check
+#   endif
     
     /**
      *  Constructor from a map (this will create an associative array)
@@ -133,7 +139,7 @@ public:
      *  Move constructor
      *  @param  value
      */
-    Value(Value &&that) noexcept;
+    Value(Value &&that) _NOEXCEPT;
     
     /**
      *  Destructor
@@ -145,7 +151,7 @@ public:
      *  @param  value
      *  @return Value
      */
-    Value &operator=(Value &&value) noexcept;
+    Value &operator=(Value &&value) _NOEXCEPT;
     
     /**
      *  Assignment operator for various types
@@ -382,6 +388,7 @@ public:
     bool isFloat()          const { return type() == Type::Float; }
     bool isObject()         const { return type() == Type::Object; }
     bool isArray()          const { return type() == Type::Array; }
+    bool isScalar()         const { return isNull() || isNumeric() || isBool() || isString() || isFloat(); }
     bool isCallable()       const;
     bool isStreamResource() const;
 
@@ -1187,6 +1194,12 @@ protected:
     struct _zend_class_entry *classEntry(bool allowString = true) const;
     
     /**
+     *  Functions that need access to the privates
+     */
+    friend Value constant(const char *name, size_t size);
+    friend bool  define(const char *name, size_t size, const Value &value);
+    
+    /**
      *  The Globals and Member classes can access the zval directly
      */
     friend class Globals;
@@ -1200,6 +1213,7 @@ protected:
     friend class HashMember<std::string>;
     friend class Callable;
     friend class Script;
+    friend class ConstantImpl;
 };
 
 /**
