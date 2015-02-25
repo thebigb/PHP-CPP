@@ -31,6 +31,7 @@
 #include <phpcpp/ini.h>
 #include <phpcpp/exception.h>
 #include <phpcpp/fatalerror.h>
+#include <phpcpp/stream.h>
 #include <phpcpp/streams.h>
 #include <phpcpp/type.h>
 #include <phpcpp/hashparent.h>

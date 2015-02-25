@@ -12,6 +12,7 @@
  */
 #include <stdlib.h>
 #include <string>
+#include <cstring>
 #include <initializer_list>
 #include <vector>
 #include <map>
@@ -37,6 +38,7 @@
 #include <zend_exceptions.h>
 #include <zend_interfaces.h>
 #include <zend_ini.h>
+#include <php_streams.h>
 
 /**
  *  Macro to convert results to success status
@@ -50,6 +52,7 @@
 #include "../include/ini.h"
 #include "../include/exception.h"
 #include "../include/fatalerror.h"
+#include "../include/stream.h"
 #include "../include/streams.h"
 #include "../include/type.h"
 #include "../include/hashparent.h"

@@ -23,6 +23,9 @@
  */
 struct _zval_struct;
 
+struct _php_stream;
+typedef struct _php_stream php_stream;
+
 /**
  *  Set up namespace
  */
@@ -32,6 +35,7 @@ namespace Php {
  *  Forward definitions
  */
 class Base;
+class Stream;
 class ValueIterator;
 template <class Type> class HashMember;
 
@@ -371,14 +375,15 @@ public:
      *  Check if the value is of a certain type
      *  @return bool
      */
-    bool isNull()       const { return type() == Type::Null; }
-    bool isNumeric()    const { return type() == Type::Numeric; }
-    bool isBool()       const { return type() == Type::Bool; }
-    bool isString()     const { return type() == Type::String; }
-    bool isFloat()      const { return type() == Type::Float; }
-    bool isObject()     const { return type() == Type::Object; }
-    bool isArray()      const { return type() == Type::Array; }
-    bool isCallable()   const;
+    bool isNull()           const { return type() == Type::Null; }
+    bool isNumeric()        const { return type() == Type::Numeric; }
+    bool isBool()           const { return type() == Type::Bool; }
+    bool isString()         const { return type() == Type::String; }
+    bool isFloat()          const { return type() == Type::Float; }
+    bool isObject()         const { return type() == Type::Object; }
+    bool isArray()          const { return type() == Type::Array; }
+    bool isCallable()       const;
+    bool isStreamResource() const;
 
     /**
      *  Get access to the raw buffer - you can use this for direct reading and
@@ -439,6 +444,12 @@ public:
      *  @return double
      */
     double floatValue() const;
+
+	/**
+	 *  Retrieve the value as stream
+	 *  @return Stream
+	 */
+	Stream *stream() const;
     
     /**
      *  Convert the object to a vector
@@ -695,6 +706,15 @@ public:
     operator double () const
     {
         return floatValue();
+    }
+
+    /**
+     *  Cast to a stream object
+     *  @return Stream *
+     */
+    operator Stream * () const
+    {
+        return stream();
     }
 
     /**
@@ -1060,7 +1080,6 @@ public:
     bool derivedFrom(const char *classname, bool allowString = false) const { return derivedFrom(classname, strlen(classname), allowString); }
     bool derivedFrom(const std::string &classname, bool allowString = false) const { return derivedFrom(classname.c_str(), classname.size(), allowString); }
 
-
 private:
     /**
      *  Iterate over key value pairs
@@ -1097,7 +1116,7 @@ protected:
      *  @var struct zval
      */
     struct _zval_struct *_val;
-    
+
     /**
      *  Detach the zval
      * 
@@ -1122,7 +1141,17 @@ protected:
      */
     void attach(struct _zval_struct *val);
     void attach(struct _hashtable *hashtable);
-    
+
+	/**
+	 *  Get resource stream (if found)
+	 *
+	 *  This method will attempt to load a php_stream pointer from the zval,
+	 *  if the zval type is Type::Resource.
+	 *
+	 *  @param  php_stream
+	 */
+	void getStream(php_stream **stream) const;
+
     /**
      *  Set a certain property without running any checks (you must already know
      *  for sure that this is an array, and that the index is not yet in use)

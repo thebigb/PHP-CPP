@@ -43,7 +43,7 @@ Value::Value()
 
 /**
  *  Constructor for null ptr
-*/
+ */
 Value::Value(std::nullptr_t value)
 {
     // create a null zval
@@ -384,12 +384,39 @@ void Value::attach(struct _hashtable *hashtable)
 }
 
 /**
+ *  Get resource stream (if found)
+ *  @param  stream
+ */
+void Value::getStream(php_stream **stream) const
+{
+    // zval type must be Type::Resource
+    if (type() != Type::Resource)
+    {
+        return;
+    }
+
+    zval *return_value;
+    php_stream_from_zval(*stream, (_zval_struct**)&_val);
+}
+
+/**
  *  Retrieve the refcount
  *  @return int
  */
 int Value::refcount() const
 {
     return Z_REFCOUNT_P(_val);
+}
+
+/**
+ *  Find out whether or not the Resource-typed zval contains a php_stream pointer
+ *  @return bool
+ */
+bool Value::isStreamResource() const
+{
+    php_stream *stream = NULL;
+    getStream(&stream);
+	return stream != NULL;
 }
 
 /**
@@ -1005,7 +1032,10 @@ Value &Value::setType(Type type)
     case Type::Array:           convert_to_array(_val); break;
     case Type::Object:          convert_to_object(_val); break;
     case Type::String:          convert_to_string(_val); break;
-    case Type::Resource:        throw FatalError("Resource types can not be handled by the PHP-CPP library"); break;
+    case Type::Resource:
+	    if(!isStreamResource())
+		    throw FatalError("Resource types can not be handled by the PHP-CPP library");
+        break;
     case Type::Constant:        throw FatalError("Constant types can not be assigned to a PHP-CPP library variable"); break;
     case Type::ConstantArray:   throw FatalError("Constant types can not be assigned to a PHP-CPP library variable"); break;
     case Type::Callable:        throw FatalError("Callable types can not be assigned to a PHP-CPP library variable"); break;
@@ -1286,6 +1316,17 @@ double Value::floatValue() const
 
     // make a clone
     return clone(Type::Float).floatValue();
+}
+
+/**
+ *  Retrieve the value as stream
+ *  @return Stream
+ */
+Stream *Value::stream() const
+{
+    php_stream *stream = NULL;
+    getStream(&stream);
+	return new Stream(stream);
 }
 
 /**
